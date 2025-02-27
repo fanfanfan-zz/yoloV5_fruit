@@ -1,0 +1,9 @@
+# 训练和验证数据的路径（绝对或相对路径均可）
+train: /home/zy/yolov5/data/b_w_a_dataset/train/images
+val: /home/zy/yolov5/data/b_w_a_dataset/val/images
+
+# 类别数量
+nc: 3
+
+# 类别名称列表（必须与标签中的 class_id 顺序一致！）
+names: ['banana', 'watermelon','apple']

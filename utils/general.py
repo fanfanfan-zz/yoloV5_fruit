@@ -59,7 +59,7 @@ DATASETS_DIR = Path(os.getenv("YOLOv5_DATASETS_DIR", ROOT.parent / "datasets")) 
 AUTOINSTALL = str(os.getenv("YOLOv5_AUTOINSTALL", True)).lower() == "true"  # global auto-install mode
 VERBOSE = str(os.getenv("YOLOv5_VERBOSE", True)).lower() == "true"  # global verbose mode
 TQDM_BAR_FORMAT = "{l_bar}{bar:10}{r_bar}"  # tqdm bar format
-FONT = "Arial.ttf"  # https://github.com/ultralytics/assets/releases/download/v0.0.0/Arial.ttf
+FONT = "/# https://github.com/ultralytics/assets/releases/download/v0.0.0/Arial.ttf"  # https://github.com/ultralytics/assets/releases/download/v0.0.0/Arial.ttf
 
 torch.set_printoptions(linewidth=320, precision=5, profile="long")
 np.set_printoptions(linewidth=320, formatter={"float_kind": "{:11.5g}".format})  # format short g, %precision=5
@@ -508,14 +508,26 @@ def check_file(file, suffix=""):
         return files[0]  # return file
 
 
-def check_font(font=FONT, progress=False):
-    """Ensures specified font exists or downloads it from Ultralytics assets, optionally displaying progress."""
-    font = Path(font)
-    file = CONFIG_DIR / font.name
-    if not font.exists() and not file.exists():
-        url = f"https://github.com/ultralytics/assets/releases/download/v0.0.0/{font.name}"
-        LOGGER.info(f"Downloading {url} to {file}...")
-        torch.hub.download_url_to_file(url, str(file), progress=progress)
+def check_font(font=FONT, progress=False):  
+    """确保指定的字体存在，如果不存在则尝试使用本地文件。"""  
+    font = Path(font)  
+    file = CONFIG_DIR / font.name  
+    
+    # 检查字体文件是否存在  
+    if font.exists() or file.exists():  
+        return  # 如果存在，直接返回  
+
+    # 设计本地字体文件名  
+    local_font_file = Path("/home/zy/.config/Ultralytics/Arial.ttf")  # 替换为你的本地文件路径  
+
+    if local_font_file.exists():  
+        # 如果本地文件存在，复制到CONFIG_DIR  
+        file.parent.mkdir(parents=True, exist_ok=True)  # 确保目录存在  
+        local_font_file.replace(file)  # 替换为需要的文件  
+        LOGGER.info(f"Using local font from {local_font_file}...")  
+    else:  
+        # 如果本地文件不存在，则记录错误或提供替代方案  
+        LOGGER.error(f"Font {font.name} not found locally, and cannot be downloaded!") 
 
 
 def check_dataset(data, autodownload=True):
